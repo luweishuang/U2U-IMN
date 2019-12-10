@@ -1,36 +1,44 @@
 import tensorflow as tf
 import numpy as np
-import os
+import os, sys
 import time
 import datetime
 import operator
 from collections import defaultdict
-from model import metrics
-from model import data_helpers
-from model.model_U2U_IMN import U2U_IMN
+
+cur_dir = os.path.abspath(os.path.dirname(__file__))
+if cur_dir not in sys.path:
+    sys.path.append(cur_dir)
+
+import metrics
+import data_helpers
+from model_U2U_IMN import U2U_IMN
+
+repo_dir = os.path.dirname(cur_dir)
+DATA_DIR = os.path.join(repo_dir, "data/Ubuntu_Corpus_V2")
 
 # Files
-tf.flags.DEFINE_string("train_file", "", "path to train file")
-tf.flags.DEFINE_string("valid_file", "", "path to valid file")
-tf.flags.DEFINE_string("response_file", "", "path to response file")
-tf.flags.DEFINE_string("vocab_file", "", "vocabulary file")
-tf.flags.DEFINE_string("char_vocab_file",  "", "path to char vocab file")
-tf.flags.DEFINE_string("embedded_vector_file", "", "pre-trained embedded word vector")
+tf.flags.DEFINE_string("train_file", os.path.join(DATA_DIR, "train.txt"), "path to train file")
+tf.flags.DEFINE_string("valid_file", os.path.join(DATA_DIR, "valid.txt"), "path to valid file")
+tf.flags.DEFINE_string("response_file", os.path.join(DATA_DIR, "responses.txt"), "path to response file")
+tf.flags.DEFINE_string("vocab_file", os.path.join(DATA_DIR, "vocab.txt"), "vocabulary file")
+tf.flags.DEFINE_string("char_vocab_file",  os.path.join(DATA_DIR, "char_vocab.txt"), "path to char vocab file")
+tf.flags.DEFINE_string("embedded_vector_file", os.path.join(DATA_DIR, "glove_42B_300d_vec_plus_word2vec_100.txt"), "pre-trained embedded word vector")
 
 # Model Hyperparameters
 tf.flags.DEFINE_integer("max_utter_len", 50, "max utterance length")
 tf.flags.DEFINE_integer("max_utter_num", 10, "max utterance number")
 tf.flags.DEFINE_integer("max_response_len", 50, "max response length")
 tf.flags.DEFINE_integer("max_word_length", 18, "max word length")
-tf.flags.DEFINE_integer("num_layer", 3, "max response length")
-tf.flags.DEFINE_integer("embedding_dim", 200, "dimensionality of word embedding")
+tf.flags.DEFINE_integer("num_layer", 1, "max response length")
+tf.flags.DEFINE_integer("embedding_dim", 400, "dimensionality of word embedding")
 tf.flags.DEFINE_integer("rnn_size", 200, "number of RNN units")
 
 # Training parameters
-tf.flags.DEFINE_integer("batch_size", 128, "batch size (default: 128)")
+tf.flags.DEFINE_integer("batch_size", 96, "batch size (default: 128)")
 tf.flags.DEFINE_float("l2_reg_lambda", 0, "L2 regularizaion lambda (default: 0)")
-tf.flags.DEFINE_float("dropout_keep_prob", 1.0, "dropout keep probability (default: 1.0)")
-tf.flags.DEFINE_integer("num_epochs", 1000000, "number of training epochs (default: 1000000)")
+tf.flags.DEFINE_float("dropout_keep_prob", 0.8, "dropout keep probability (default: 1.0)")
+tf.flags.DEFINE_integer("num_epochs", 10, "number of training epochs (default: 1000000)")
 tf.flags.DEFINE_integer("evaluate_every", 1000, "evaluate model on valid dataset after this many steps (default: 1000)")
 
 # Misc Parameters
@@ -208,7 +216,6 @@ with tf.Graph().as_default():
             top_1_precision = metrics.top_1_precision(results)
             total_valid_query = metrics.get_num_valid_query(results)
             print('MAP (mean average precision: {}\tMRR (mean reciprocal rank): {}\tTop-1 precision: {}\tNum_query: {}'.format(mvp, mrr, top_1_precision, total_valid_query))
-
             return mrr
 
         best_mrr = 0.0
