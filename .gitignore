@@ -1,0 +1,5 @@
+data/Ubuntu_Corpus_V2.zip
+data/Ubuntu_Corpus_V2/
+model/__pycache__/
+scripts/log_train.txt
+
