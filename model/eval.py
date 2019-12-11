@@ -10,7 +10,7 @@ if cur_dir not in sys.path:
 
 import metrics
 from collections import defaultdict
-from model import data_helpers
+import data_helpers
 
 repo_dir = os.path.dirname(cur_dir)
 DATA_DIR = os.path.join(repo_dir, "data/Ubuntu_Corpus_V2")
@@ -30,7 +30,7 @@ tf.flags.DEFINE_integer("max_word_length", 18, "max word length")
 
 # Test parameters
 tf.flags.DEFINE_integer("batch_size", 128, "Batch Size (default: 64)")
-tf.flags.DEFINE_string("checkpoint_dir", "", "Checkpoint directory from training run")
+tf.flags.DEFINE_string("checkpoint_dir", "./runs/1575974301/checkpoints", "Checkpoint directory from training run")
 
 # Misc Parameters
 tf.flags.DEFINE_boolean("allow_soft_placement", True, "Allow device soft device placement")
