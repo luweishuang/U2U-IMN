@@ -1,5 +1,6 @@
 model/nohup.out
 model/runs/
+model/checkpoints/
 .idea/
 data/Ubuntu_Corpus_V2.zip
 data/Ubuntu_Corpus_V2/

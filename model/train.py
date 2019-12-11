@@ -68,7 +68,7 @@ print('train_pairs: {}'.format(len(train_dataset)))
 valid_dataset = data_helpers.load_dataset(FLAGS.valid_file, vocab, FLAGS.max_utter_len, FLAGS.max_utter_num, response_data)
 print('valid_pairs: {}'.format(len(valid_dataset)))
 
-target_loss_weight=[1.0,1.0]
+target_loss_weight = [1.0, 1.0]
 
 with tf.Graph().as_default():
     session_conf = tf.ConfigProto(

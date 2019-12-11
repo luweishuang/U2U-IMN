@@ -7,7 +7,7 @@ def load_vocab(fname):
     '''
     vocab = {"<PAD>": 0, ...}
     '''
-    vocab={}
+    vocab = {}
     with open(fname, 'rt') as f:
         for line in f:
             line = line.strip()   # line = line.decode('utf-8').strip()
@@ -80,15 +80,14 @@ def load_responses(fname, vocab, maxlen):
             responses[fields[0]] = (rs_len, rs_num, rs_vec, rs_tokens)
     return responses
 
-def load_dataset(fname, vocab, max_utter_len, max_utter_num, responses):
 
-    dataset=[]
+def load_dataset(fname, vocab, max_utter_len, max_utter_num, responses):
+    dataset = []
     with open(fname, 'rt') as f:
         for line in f:
             line = line.strip()
             fields = line.split('\t')
             us_id = fields[0]
-
             context = fields[1]
             turns = (context + ' ').split(' __eot__ ')[:-1]
             utterances = []
@@ -106,7 +105,7 @@ def load_dataset(fname, vocab, max_utter_len, max_utter_num, responses):
             us_vec = []
             us_len = []
             for utterance in utterances:
-                u_tokens = utterance.split(' ')[:max_utter_len]  # select the first max_utter_len tokens in every utterance
+                u_tokens = utterance.split(' ')[:max_utter_len]       # select the first max_utter_len tokens in every utterance
                 u_len, u_vec = to_vec(u_tokens, vocab, max_utter_len)
                 us_tokens.append(u_tokens)
                 us_vec.append(u_vec)
@@ -123,7 +122,6 @@ def load_dataset(fname, vocab, max_utter_len, max_utter_num, responses):
                     base = np.arange(us_num-1, -1, -1)
                     for i in range(rs_num):
                         dist[i] = base + i
-
                     dataset.append((us_id, us_len, us_vec, us_num, dist, rs_id, rs_len, rs_vec, rs_num, 0.0, us_tokens, rs_tokens))
                     # break  # uncomment this line when testing recall_2@1
 
@@ -136,7 +134,6 @@ def load_dataset(fname, vocab, max_utter_len, max_utter_num, responses):
                     base = np.arange(us_num-1, -1, -1)
                     for i in range(rs_num):
                         dist[i] = base + i
-
                     dataset.append((us_id, us_len, us_vec, us_num, dist, rs_id, rs_len, rs_vec, rs_num, 1.0, us_tokens, rs_tokens))
     return dataset
 
