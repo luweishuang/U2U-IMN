@@ -356,7 +356,7 @@ class U2U_IMN(object):
         with tf.variable_scope("prediction_layer") as vs:
             hidden_input_size = joined_feature.get_shape()[1].value
             hidden_output_size = 256
-            regularizer = tf.contrib.layers.l2_regularizer(l2_reg_lambda)
+            regularizer = tf.contrib.layers.l2_regularizer(float(l2_reg_lambda))
             joined_feature = tf.nn.dropout(joined_feature, keep_prob=self.dropout_keep_prob)
             full_out = tf.contrib.layers.fully_connected(joined_feature, hidden_output_size,
                                                             activation_fn=tf.nn.relu,
