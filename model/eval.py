@@ -1,8 +1,6 @@
 import tensorflow as tf
 import numpy as np
 import os, sys
-import time
-import datetime
 import operator
 cur_dir = os.path.abspath(os.path.dirname(__file__))
 if cur_dir not in sys.path:
@@ -10,7 +8,7 @@ if cur_dir not in sys.path:
 
 import metrics
 from collections import defaultdict
-from model import data_helpers
+import data_helpers
 
 repo_dir = os.path.dirname(cur_dir)
 DATA_DIR = os.path.join(repo_dir, "data/Ubuntu_Corpus_V2")
@@ -30,7 +28,7 @@ tf.flags.DEFINE_integer("max_word_length", 18, "max word length")
 
 # Test parameters
 tf.flags.DEFINE_integer("batch_size", 128, "Batch Size (default: 64)")
-tf.flags.DEFINE_string("checkpoint_dir", "", "Checkpoint directory from training run")
+tf.flags.DEFINE_string("checkpoint_dir", "./checkpoints", "Checkpoint directory from training run")
 
 # Misc Parameters
 tf.flags.DEFINE_boolean("allow_soft_placement", True, "Allow device soft device placement")
@@ -51,12 +49,9 @@ response_data = data_helpers.load_responses(FLAGS.response_file, vocab, FLAGS.ma
 print('response_data size: {}'.format(len(response_data)))
 test_dataset = data_helpers.load_dataset(FLAGS.test_file, vocab, FLAGS.max_utter_len, FLAGS.max_utter_num, response_data)
 print('test_pairs: {}'.format(len(test_dataset)))
-
-target_loss_weight=[1.0,1.0]
+target_loss_weight=[1.0, 1.0]
 
 print("\nEvaluating...\n")
-
-
 checkpoint_file = tf.train.latest_checkpoint(FLAGS.checkpoint_dir)
 print(checkpoint_file)
 
