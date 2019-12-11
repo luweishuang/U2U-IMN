@@ -1,5 +1,5 @@
 
-test_out_filename = "ubuntu_test_out.txt"
+test_out_filename = "../model/ubuntu_test_out-29000.txt"
 
 with open(test_out_filename, 'r') as f:
 	cur_q_id = None
@@ -38,3 +38,19 @@ with open(test_out_filename, 'r') as f:
 	print("recall@2 = {}".format(recall["recall@2"]))
 	print("recall@5 = {}".format(recall["recall@5"]))
 
+'''
+#-----------41000----------
+Accuracy: 0.8483771505333693, Precision: 0.3859952756273827  Recall: 0.8723044397463002  F1: 0.5351751868601549 Loss: 0.35136242262608064
+MAP (mean average precision: 0.8419946348870913	MRR (mean reciprocal rank): 0.8419946348870913	Top-1 precision: 0.7484672304439747	Num_query: 18920
+
+num_query = 18920
+recall@1 = 0.7484672304439747
+recall@2 = 0.8676532769556026
+recall@5 = 0.973784355179704
+
+#-----------29000----------
+num_query = 18920
+recall@1 = 0.7457188160676532
+recall@2 = 0.8633720930232558
+recall@5 = 0.9729915433403805
+'''
