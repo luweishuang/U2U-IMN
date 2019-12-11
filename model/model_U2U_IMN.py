@@ -29,6 +29,7 @@ def load_embed_vectors(fname, dim):
 
     return vectors
 
+
 def load_word_embeddings(vocab, dim):
     vectors = load_embed_vectors(FLAGS.embedded_vector_file, dim)
     vocab_size = len(vocab)
@@ -37,8 +38,7 @@ def load_word_embeddings(vocab, dim):
         if word in vectors:
             embeddings[code] = vectors[word]
         #else:
-        #    embeddings[code] = np.random.uniform(-0.25, 0.25, dim) 
-
+        #    embeddings[code] = np.random.uniform(-0.25, 0.25, dim)
     return embeddings 
 
 
@@ -102,6 +102,7 @@ def get_dist_mask(max_len):
             mask[i, j] = abs(i-j)
     return tf.constant(mask, name="distance_mask")
 
+
 def self_attended(inputs, lens, max_len, scope, scope_reuse=False):
     # inputs: [batch_size, max_len, dim]
     with tf.variable_scope(scope, reuse=scope_reuse):
@@ -126,11 +127,11 @@ def self_attended(inputs, lens, max_len, scope, scope_reuse=False):
 
     return attended_self
 
+
 # context:  [batch_size, max_utter_num*max_utter_len, dim]
 # response: [batch_size, max_response_num*max_response_len, dim]
 # distance: [batch_size, max_response_num, max_utter_num]
 def context_response_similarity_matrix(context, response, distance, max_utter_num, max_utter_len, max_response_num, max_response_len):
-
     c2 = tf.transpose(context, perm=[0, 2, 1])
     similarity = tf.matmul(response, c2, name='similarity_matrix')  # [batch_size, max_response_num*max_response_len, max_utter_num*max_utter_len]
 
@@ -149,6 +150,7 @@ def context_response_similarity_matrix(context, response, distance, max_utter_nu
 
     return similarity
 
+
 def attended_response(similarity_matrix, context, flattened_utters_len, max_utter_len, max_utter_num):
     # similarity_matrix:    [batch_size, max_response_num*response_len, max_utter_num*max_utter_len]
     # context:              [batch_size, max_utter_num*max_utter_len, dim]
@@ -164,6 +166,7 @@ def attended_response(similarity_matrix, context, flattened_utters_len, max_utte
     attended_response = tf.matmul(attention_weight_for_c, context)     # [batch_size, max_response_num*response_len, dim]
 
     return attended_response
+
 
 def attended_context(similarity_matrix, response, flattened_responses_len, max_response_len, max_response_num):
     # similarity_matrix:    [batch_size, max_response_num*response_len, max_utter_num*max_utter_len]
@@ -205,7 +208,7 @@ class U2U_IMN(object):
         self.u_charLen = tf.placeholder(tf.int32, [None, max_utter_num, max_utter_len], name="utterances_char_len")
 
         self.r_charVec = tf.placeholder(tf.int32, [None, max_response_num, max_response_len, maxWordLength], name="response_char")
-        self.r_charLen =  tf.placeholder(tf.int32, [None, max_response_num, max_response_len], name="response_char_len")
+        self.r_charLen = tf.placeholder(tf.int32, [None, max_response_num, max_response_len], name="response_char_len")
 
         l2_loss = tf.constant(1.0)
 
@@ -243,7 +246,6 @@ class U2U_IMN(object):
         response_embedded = tf.nn.dropout(response_embedded, keep_prob=self.dropout_keep_prob)
         print("utterances_embedded: {}".format(utterances_embedded.get_shape()))
         print("response_embedded: {}".format(response_embedded.get_shape()))
-
 
         # =============================== Encoding layer ===============================
         with tf.variable_scope("encoding_layer") as vs:
@@ -304,7 +306,7 @@ class U2U_IMN(object):
             final_utterances_max = tf.reduce_max(final_utterances_output, axis=1)         # [batch_size, 2*rnn_size]
             final_utterances_state = tf.concat(axis=1, values=[final_utterances_state[0].h, final_utterances_state[1].h])  # [batch_size, 2*rnn_size]
 
-            final_utterances =  tf.concat(axis=1, values=[final_utterances_max, final_utterances_state])
+            final_utterances = tf.concat(axis=1, values=[final_utterances_max, final_utterances_state])
             print("establish rnn aggregation on response")
 
             # response
@@ -356,7 +358,7 @@ class U2U_IMN(object):
         with tf.variable_scope("prediction_layer") as vs:
             hidden_input_size = joined_feature.get_shape()[1].value
             hidden_output_size = 256
-            regularizer = tf.contrib.layers.l2_regularizer(l2_reg_lambda)
+            regularizer = tf.contrib.layers.l2_regularizer(float(l2_reg_lambda))
             joined_feature = tf.nn.dropout(joined_feature, keep_prob=self.dropout_keep_prob)
             full_out = tf.contrib.layers.fully_connected(joined_feature, hidden_output_size,
                                                             activation_fn=tf.nn.relu,

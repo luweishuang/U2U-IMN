@@ -1,19 +1,26 @@
 import tensorflow as tf
 import numpy as np
-import os
+import os, sys
 import time
 import datetime
 import operator
+cur_dir = os.path.abspath(os.path.dirname(__file__))
+if cur_dir not in sys.path:
+    sys.path.append(cur_dir)
+
 import metrics
 from collections import defaultdict
 from model import data_helpers
 
+repo_dir = os.path.dirname(cur_dir)
+DATA_DIR = os.path.join(repo_dir, "data/Ubuntu_Corpus_V2")
+
 # Files
-tf.flags.DEFINE_string("test_file", "", "path to test file")
-tf.flags.DEFINE_string("response_file", "", "path to response file")
-tf.flags.DEFINE_string("vocab_file", "", "vocabulary file")
-tf.flags.DEFINE_string("char_vocab_file", "", "vocabulary file")
-tf.flags.DEFINE_string("output_file", "", "prediction output file")
+tf.flags.DEFINE_string("test_file",  os.path.join(DATA_DIR, "test.txt"), "path to test file")
+tf.flags.DEFINE_string("response_file",  os.path.join(DATA_DIR, "responses.txt"), "path to response file")
+tf.flags.DEFINE_string("vocab_file", os.path.join(DATA_DIR, "vocab.txt"), "vocabulary file")
+tf.flags.DEFINE_string("char_vocab_file", os.path.join(DATA_DIR, "char_vocab.txt"), "vocabulary file")
+tf.flags.DEFINE_string("output_file", "./ubuntu_test_out.txt", "prediction output file")
 
 # Model Hyperparameters
 tf.flags.DEFINE_integer("max_utter_len", 50, "max utterance length")
